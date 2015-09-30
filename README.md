@@ -7,7 +7,7 @@ Created by Brian Elting
 1. Install Node.js from [here](https://nodejs.org/en/download/)
 2. Run `npm install -g babel` to install the global [Babel](https://babeljs.io/) dependency
 2. Run `npm install` to install the package dependencies
-3. Run `npm start` to solve the word Search
+3. Run `npm start` to solve the word search
 
 ## Output
 
