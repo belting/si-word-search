@@ -1,3 +1,5 @@
+'use strict';
+
 import fs from 'fs';
 
 let list = fs.readFileSync('./WordList.txt', 'utf8').toString().split('\n')

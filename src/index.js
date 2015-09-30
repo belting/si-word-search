@@ -1,3 +1,5 @@
+'use strict';
+
 import Direction from './direction';
 import grid from './grid';
 import wordList from './word-list';
@@ -5,19 +7,24 @@ import wordList from './word-list';
 const ROW_COUNT = grid.length;
 const COLUMN_COUNT = grid[0].length;
 
-// Hash words by first letter
+// Hashes words by first letter
 let hashWords = words => {
   let hash = {};
+
   words.forEach(word => {
     let firstLetter = word.charAt(0).toUpperCase();
+
     if (hash[firstLetter] === undefined) {
       hash[firstLetter] = [];
     }
+
     hash[firstLetter].push(word);
   });
+
   return hash;
 };
 
+// Recursively searches for partial words
 let search = (partial, rowIndex, colIndex, direction) => {
   // If there are no additional letters, then we have found the word
   if (partial.length === 0) {
@@ -92,41 +99,48 @@ let search = (partial, rowIndex, colIndex, direction) => {
   return search(partial.slice(1), nextRowIndex, nextColIndex, direction);
 };
 
-let wordHash = hashWords(wordList);
+// Solves the word search
+let solve = () => {
+  // Build word hash
+  let wordHash = hashWords(wordList);
 
-// Iterate through rows
-grid.forEach((row, rowIndex) => {
-  // Iterate through columns
-  row.forEach((letter, colIndex) => {
-    // Get list of words beginning with current letter
-    let words = wordHash[letter];
-    if (words === undefined || words.length === 0) {
-      return;
-    }
-    // Iterate through words
-    for (let wordIndex = words.length - 1; wordIndex >= 0; wordIndex--) {
-      let word = words[wordIndex];
-      // Iterate through directions
-      Object.keys(Direction).forEach(direction => {
-        // Search for word in grid after removing whitespace and converting to uppercase
-        let normalizedWord = word.replace(/\s+/g, '').toUpperCase();
-        let found = search(normalizedWord.slice(1), rowIndex, colIndex, Direction[direction]);
+  // Iterate through rows
+  grid.forEach((row, rowIndex) => {
+    // Iterate through columns
+    row.forEach((letter, colIndex) => {
+      // Get list of words beginning with current letter
+      let words = wordHash[letter];
+      if (words === undefined || words.length === 0) {
+        return;
+      }
+      // Iterate through words
+      for (let wordIndex = words.length - 1; wordIndex >= 0; wordIndex--) {
+        let word = words[wordIndex];
+        // Iterate through directions
+        Object.keys(Direction).forEach(direction => {
+          // Search for word in grid after removing whitespace and converting to uppercase
+          let normalizedWord = word.replace(/\s+/g, '').toUpperCase();
+          let found = search(normalizedWord.slice(1), rowIndex, colIndex, Direction[direction]);
 
-        if (found) {
-          // Remove word from hash once found
-          wordHash[letter].splice(wordHash[letter].indexOf(word), 1);
+          if (found) {
+            // Remove word from hash once found
+            wordHash[letter].splice(wordHash[letter].indexOf(word), 1);
 
-          // Print results to console
-          console.log(`Found "${word}" at row ${rowIndex}, column ${colIndex} in ${direction} direction`);
-        }
-      });
-    }
+            // Print results to console
+            console.log(`Found "${word}" at row ${rowIndex}, column ${colIndex} in ${direction} direction`);
+          }
+        });
+      }
+    });
   });
-});
 
-// Display words not found
-Object.keys(wordHash).forEach(letter => {
-  wordHash[letter]
-    .filter(words => words.length > 0)
-    .forEach(word => console.log(`"${word}" not found`))
-});
+  // List words not found
+  Object.keys(wordHash).forEach(letter => {
+    wordHash[letter]
+      .filter(words => words.length > 0)
+      .forEach(word => console.log(`"${word}" not found`))
+  });
+};
+
+// Solve word search
+solve();
